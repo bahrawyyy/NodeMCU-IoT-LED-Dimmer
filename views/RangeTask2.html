@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <title>JavaScript</title>
+    <style>
+        body{
+            font-family: "Comic Sans MS",cursive,sans-serif;
+        }
+        #Rangge{
+            box-sizing: border-box;
+            background-color: #f1fad9;
+            margin: 90px;
+            padding: 20px;
+            width: 600px;
+            border: 2px solid;
+        }
+        #reddd{
+            margin: 10px;
+        }
+        #oRed{
+            margin: 20px;
+        }
+    </style>
+</head>
+
+
+<body>
+        <div id = "Rangge">
+        <div><label for="red">Range :</label>
+        0<input type = "range" id = "reddd" min = "0" max = "255" name = "red" />255 <span id = "oRed"></span></div>
+        </div>
+
+    <script>
+        //var HOST = "ws://localhost:3000";
+        var HOST = location.origin.replace(/^http/, 'ws');
+        var ws = new WebSocket(HOST);
+
+        var slidered = document.getElementById("reddd");
+        var valred = document.getElementById("oRed");
+        valred.innerHTML =  "Value : " + slidered.value;
+
+        slidered.oninput = function(){
+        valred.innerHTML =  "Value : " + slidered.value;
+        if(ws && ws.readyState == 1){  //More gurantee
+        ws.send(slidered.value);
+        }
+        }
+
+        ws.onopen = function(){
+            console.log("Connected to server");
+            ws.send("Hello Server");
+        }
+        ws.onmessage = function(event){
+            // Here the msg doesn't arrive straightforward
+            console.log(event.data);
+            var msg = event.data;
+            slidered.value = msg;
+            valred.innerHTML =  "Value : " + slidered.value;
+        }
+        ws.onclose = function(){
+            console.log("Disconnected from server!");
+        }
+        ws.onerror = function(){
+            console.log("There is an Error!");
+        }
+
+    </script>
+
+
+</body>
+
+</html>
